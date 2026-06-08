@@ -1,0 +1,32 @@
+services:
+  # Backend Web Service (Node.js + SQLite Persistent Disk)
+  - type: web
+    name: csp-portal-backend
+    env: node
+    plan: starter # Requires a starter instance for persistent disks
+    rootDir: backend
+    buildCommand: npm install
+    startCommand: node src/index.js
+    envVars:
+      - key: NODE_VERSION
+        value: 22
+      - key: DB_DIR
+        value: /var/data
+    disk:
+      name: sqlite-db
+      mountPath: /var/data
+      sizeGB: 1
+
+  # Frontend Static Site (Vite React served via Cloudflare-like CDN)
+  - type: web
+    name: csp-portal-frontend
+    env: static
+    rootDir: frontend
+    buildCommand: npm run build
+    publishDir: dist
+    envVars:
+      - key: VITE_API_BASE_URL
+        fromService:
+          type: web
+          name: csp-portal-backend
+          property: host
