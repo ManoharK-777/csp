@@ -18,11 +18,12 @@ services:
       sizeGB: 1
 
   # Frontend Static Site (Vite React served via Cloudflare-like CDN)
-  - type: static
+  - type: web
     name: csp-portal-frontend
+    env: static
     rootDir: frontend
     buildCommand: npm run build
-    publishDir: dist
+    staticPublishPath: dist
     envVars:
       - key: VITE_API_BASE_URL
         fromService:
